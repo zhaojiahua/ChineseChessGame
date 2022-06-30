@@ -1,0 +1,17 @@
+﻿  Using 'git status' to determine working set for adaptive non-unity build (E:\AAAWorking\UE4Projects\ChineseCheekGame).
+  Deleted hot-reload file: E:\AAAWorking\UE4Projects\ChineseCheekGame\Binaries\Win64\UE4Editor-ChineseCheekGame-1691.dll
+  Deleted hot-reload file: E:\AAAWorking\UE4Projects\ChineseCheekGame\Binaries\Win64\UE4Editor-ChineseCheekGame-1691.pdb
+  Deleted hot-reload file: E:\AAAWorking\UE4Projects\ChineseCheekGame\Binaries\Win64\UE4Editor-ChineseCheekGame-6166.dll
+  Deleted hot-reload file: E:\AAAWorking\UE4Projects\ChineseCheekGame\Binaries\Win64\UE4Editor-ChineseCheekGame-6166.pdb
+  Deleted hot-reload file: E:\AAAWorking\UE4Projects\ChineseCheekGame\Intermediate\Build\Win64\UE4Editor\Development\ChineseCheekGame\UE4Editor-ChineseCheekGame-1691.lib
+  Deleted hot-reload file: E:\AAAWorking\UE4Projects\ChineseCheekGame\Intermediate\Build\Win64\UE4Editor\Development\ChineseCheekGame\UE4Editor-ChineseCheekGame-6166.lib
+  Building ChineseCheekGameEditor...
+  Using Visual Studio 2019 14.29.30140 toolchain (C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133) and Windows 10.0.19041.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+  Building 3 actions with 8 processes...
+    [1/3] UE4Editor-ChineseCheekGame.lib
+       Creating library E:\AAAWorking\UE4Projects\ChineseCheekGame\Intermediate\Build\Win64\UE4Editor\Development\ChineseCheekGame\UE4Editor-ChineseCheekGame.lib and object E:\AAAWorking\UE4Projects\ChineseCheekGame\Intermediate\Build\Win64\UE4Editor\Development\ChineseCheekGame\UE4Editor-ChineseCheekGame.exp
+    [2/3] UE4Editor-ChineseCheekGame.dll
+       Creating library E:\AAAWorking\UE4Projects\ChineseCheekGame\Intermediate\Build\Win64\UE4Editor\Development\ChineseCheekGame\UE4Editor-ChineseCheekGame.suppressed.lib and object E:\AAAWorking\UE4Projects\ChineseCheekGame\Intermediate\Build\Win64\UE4Editor\Development\ChineseCheekGame\UE4Editor-ChineseCheekGame.suppressed.exp
+    [3/3] ChineseCheekGameEditor.target
+  Total time in Parallel executor: 6.28 seconds
+  Total execution time: 12.70 seconds
