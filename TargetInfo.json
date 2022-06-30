@@ -1,0 +1,14 @@
+{
+	"Targets": [
+		{
+			"Name": "ChineseCheekGame",
+			"Path": "E:\\AAAWorking\\UE4Projects\\ChineseCheekGame\\Source\\ChineseCheekGame.Target.cs",
+			"Type": "Game"
+		},
+		{
+			"Name": "ChineseCheekGameEditor",
+			"Path": "E:\\AAAWorking\\UE4Projects\\ChineseCheekGame\\Source\\ChineseCheekGameEditor.Target.cs",
+			"Type": "Editor"
+		}
+	]
+}
