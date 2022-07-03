@@ -1,8 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Chess/ChessPiece.h"
 #include "Components/TextRenderComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 AChessPiece::AChessPiece()
@@ -40,7 +41,7 @@ void AChessPiece::BeginPlay()
 void AChessPiece::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	TickMoveSelf(DeltaTime);
 }
 
 void AChessPiece::SetTextInfo(FString inStr)
@@ -74,5 +75,40 @@ void AChessPiece::ClickMat()
 {
 	if (matForWoodClick)	chessMesh->SetMaterial(0, matForWoodClick);
 	if (matForRoundClick)	chessMesh->SetMaterial(1, matForRoundClick);
+}
+
+void AChessPiece::TickMoveSelf(float deltaTime)
+{
+	if (!isAutoMove) return;
+
+	moveTime += deltaTime;
+	if (moveTime>=maxMoveTime)
+	{
+		isAutoMove = false;
+		SetActorLocation(targetLocation);
+	}
+	else
+	{
+		FVector temp_location = startLocation + moveDirection * moveTime * moveVelocity;
+		temp_location.Z += 0.2 * moveDistance * UKismetMathLibrary::Sin((moveTime / maxMoveTime) * 3.14159);
+		SetActorLocation(temp_location);
+	}
+}
+
+void AChessPiece::MoveSelf(FVector inLocation)
+{
+	isAutoMove = true;
+	targetLocation = inLocation;
+	moveTime = 0;
+	startLocation = GetActorLocation();//移动的初始位置
+	moveDirection = targetLocation - startLocation;//移动的方向
+	moveDistance = moveDirection.Size();//移动的距离
+	moveDirection.Normalize();
+	moveVelocity = moveDistance / maxMoveTime;//移动的速度
+}
+
+void AChessPiece::DeletSelf()
+{
+	Destroy(true);
 }
 

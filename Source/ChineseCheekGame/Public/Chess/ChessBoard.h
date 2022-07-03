@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "FrameWork/ChessRule.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "ChessBoard.generated.h"
@@ -31,7 +32,6 @@ public:
 		class UArrowComponent* arrowComp;//箭头定位
 
 
-public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ChessAttrs")
 		float chessDistance = 90.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ChessAttrs")
@@ -52,5 +52,15 @@ public:
 
 	FString GetChessInfo(int32 inValue);//获取棋子的信息
 
-	void MouseClick(AEffectPosition* effectPos);//棋盘的点击事件
+	bool MouseClick(AEffectPosition* effectPos, FChessMovePoint& playerMovePoint);//棋盘的点击事件
+
+	//通过行列查找可点击的位置
+	class AEffectPosition* GetClickPosition(int32 inRow, int32 inCol);
+
+	//清空可行走位置
+	void ClearCanMovePointsArray();
+
+private:
+	class AEffectPosition* clickPointsArray[10][9];
+	TArray<class AEffectPosition*> canMovePointsArray;
 };

@@ -49,4 +49,12 @@ public:
 
 	void DefaultMat();//鼠标松开是换回原来的材质
 	void ClickMat();//鼠标点击时换材质
+
+	bool isAutoMove = false;
+	FVector targetLocation, moveDirection, startLocation;
+	float maxMoveTime = 0.3f, moveTime, moveDistance, moveVelocity;
+	void TickMoveSelf(float deltaTime);
+
+	void MoveSelf(FVector inLocation);
+	void DeletSelf();
 };

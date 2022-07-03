@@ -43,6 +43,7 @@ public:
 	class AChessPiece* GetChessFromThisPos();
 
 	void HideMesh();
-	void ShowMoveMesh();
-	void ShowEatMesh();
+
+	void ShowMoveMesh();//显示行走标记
+	void ShowEatMesh();//显示吃子标记
 };

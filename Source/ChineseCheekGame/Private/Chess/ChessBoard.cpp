@@ -12,7 +12,7 @@
 // Sets default values
 AChessBoard::AChessBoard()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	rootComp = CreateDefaultSubobject<USceneComponent>(TEXT("rootComp"));
@@ -22,13 +22,13 @@ AChessBoard::AChessBoard()
 	{
 		boardMesh->SetupAttachment(rootComp);
 	}
-	arrowComp= CreateDefaultSubobject<UArrowComponent>(TEXT("arrowComp"));
+	arrowComp = CreateDefaultSubobject<UArrowComponent>(TEXT("arrowComp"));
 	if (arrowComp)
 	{
 		arrowComp->SetupAttachment(rootComp);
 		arrowComp->SetWorldRotation(FRotator(90, 0, 0));
-		arrowComp->SetWorldLocation(FVector(70, 63, 47));
-		arrowComp->ArrowSize = 0.3;
+		arrowComp->SetWorldLocation(FVector(350, 314, 230));
+		arrowComp->ArrowSize = 0.5;
 		arrowComp->ArrowColor = FColor::Green;
 	}
 }
@@ -53,15 +53,19 @@ void AChessBoard::Init() { SpawnChessAndPos(); }
 void AChessBoard::SpawnChessAndPos()
 {
 	FVector InitLocation = arrowComp->GetComponentLocation();
-	for (int32 i=0;i<10;i++)
+	for (int32 i = 0; i < 10; i++)
 	{
-		for (int32 j=0;j<9;j++)
+		for (int32 j = 0; j < 9; j++)
 		{
 			FVector newLocation = InitLocation + InitLocation.BackwardVector * i * chessDistance + InitLocation.LeftVector * j * chessDistance;
-			AEffectPosition* clickPosition=nullptr;
+			AEffectPosition* clickPosition = nullptr;
 			AChessPiece* chessActor = nullptr;
-			if (clickPos) { clickPosition = SpawnClickPos(newLocation, i, j); }
-			if (chessPiece &&chessRule->InitChessArray[i][j] != 0)
+			if (clickPos) 
+			{ 
+				clickPosition = SpawnClickPos(newLocation, i, j); 
+				clickPointsArray[i][j] = clickPosition;
+			}
+			if (chessPiece && chessRule->InitChessArray[i][j] != 0)
 			{
 				chessActor = SpawnChess(newLocation, chessRule->InitChessArray[i][j]);//创建了棋子
 				//然后把棋子传入到可点击的EffectPosition上面
@@ -80,7 +84,7 @@ AEffectPosition* AChessBoard::SpawnClickPos(FVector inLocation, int32 inRow, int
 	return tempEpos;
 }
 
-AChessPiece* AChessBoard::SpawnChess(FVector inLocation,int32 chessValue)
+AChessPiece* AChessBoard::SpawnChess(FVector inLocation, int32 chessValue)
 {
 	AChessPiece* chess_temp = GetWorld()->SpawnActor<AChessPiece>(chessPiece);//生成棋子
 	//设置位置
@@ -148,19 +152,35 @@ FString AChessBoard::GetChessInfo(int32 inValue)
 	return info;
 }
 
-void AChessBoard::MouseClick(AEffectPosition* effectPos)
+bool AChessBoard::MouseClick(AEffectPosition* effectPos, FChessMovePoint& playerMovePoint)
 {
 	//判断是否是自己的棋子(如果是自己的棋子就产生效果,如果是对方的棋子就没有反应)
 	bool isRedChess = chessRule->IsRedChess(effectPos->GetRow(), effectPos->GetCol());
+
+	//每次点击都要清空一下canMovePointArray
+	ClearCanMovePointsArray();
+
 	//第一次点击进行存储
-	if (firstClickPos==nullptr)
+	if (firstClickPos == nullptr)
 	{
 		//空指针说明是第一次点击
 		if (isRedChess)
 		{
 			firstClickPos = effectPos;
 			//要产生的点击效果
-			firstClickPos->GetChessFromThisPos()->ClickMat();
+			if (effectPos->HasChessActor())
+			{
+				firstClickPos->GetChessFromThisPos()->ClickMat();
+				//同时标记可走位置和可吃子
+				TArray<int32> canMoveArray = chessRule->GetCanMovePosition(firstClickPos->GetRow(), firstClickPos->GetCol());
+				for (int32 temp=0;temp<canMoveArray.Num();temp+=2)
+				{
+					AEffectPosition* temp_effectPos = GetClickPosition(canMoveArray[temp], canMoveArray[temp + 1]);
+					canMovePointsArray.Add(temp_effectPos);
+					if (temp_effectPos->GetChessFromThisPos()) { temp_effectPos->ShowEatMesh(); }//如果该位置有棋子说明是吃子
+					else { temp_effectPos->ShowMoveMesh(); }//否则说明是走棋
+				}
+			}
 		}
 	}
 	//第二次点击要么是走棋要么是吃子
@@ -171,15 +191,38 @@ void AChessBoard::MouseClick(AEffectPosition* effectPos)
 		if (isRedChess)
 		{
 			firstClickPos = nullptr;
-			MouseClick(effectPos);
+			MouseClick(effectPos, playerMovePoint);
 		}
 		else
 		{
-			//否则点击到了对方的棋子
-
-			//利用规则类判断是否成立,如果成立就产生走法
-
+			//否则点击到了对方的棋子(那就是为了吃子)或者是点到了空(那就是行走)
+			//首先判断走棋是否有效
+			bool isValidMove = chessRule->IsValidMove(firstClickPos->GetRow(), firstClickPos->GetCol(), effectPos->GetRow(), effectPos->GetCol());
+			if (isValidMove)
+			{
+				//走棋有效再产生走法
+				//对走法进行赋值
+				playerMovePoint.from.row = firstClickPos->GetRow();
+				playerMovePoint.from.col = firstClickPos->GetCol();
+				playerMovePoint.to.row = effectPos->GetRow();
+				playerMovePoint.to.col = effectPos->GetCol();
+				firstClickPos = nullptr;
+				return true;
+			}
 		}
 	}
+	return false;
 }
+
+class AEffectPosition* AChessBoard::GetClickPosition(int32 inRow, int32 inCol)
+{
+	return clickPointsArray[inRow][inCol];
+}
+
+void AChessBoard::ClearCanMovePointsArray()
+{
+	for (int32 i = 0; i < canMovePointsArray.Num(); i++) { canMovePointsArray[i]->HideMesh(); }
+	canMovePointsArray.Reset(0);
+}
+
 

@@ -1,12 +1,12 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-
-#include "FrameWork/ChessPlayerState.h"
 #include "FrameWork/ChessPlayerController.h"
-#include "FrameWork/ChessCharacter.h"
 #include "FrameWork/ChessRule.h"
+#include "FrameWork/ChessPlayerState.h"
+#include "FrameWork/ChessCharacter.h"
 #include "Chess/EffectPosition.h"
 #include "Chess/ChessBoard.h"
+#include "Chess/ChessPiece.h"
 #include <Runtime/UMG/Public/Blueprint/UserWidget.h>
 #include "Kismet/GameplayStatics.h"
 
@@ -105,9 +105,34 @@ void AChessPlayerController::MouseDownClick()
 		{
 			int32 rowInfo =effectPos->GetRow();
 			int32 colInfo = effectPos->GetCol();
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, "row: " + FString::FromInt(rowInfo) + "col: " + FString::FromInt(colInfo));
-			chessBoard->MouseClick(effectPos);//调用棋盘点击事件
+			//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, "row: " + FString::FromInt(rowInfo) + "col: " + FString::FromInt(colInfo));
 			
+			FChessMovePoint playerMovePoint;
+			bool validMoveFinished = chessBoard->MouseClick(effectPos, playerMovePoint);//调用棋盘点击事件
+			if (validMoveFinished)//走棋合法
+			{
+				ValidMoveChess(playerMovePoint);
+			}
 		}
 	}
 }
+
+void AChessPlayerController::ValidMoveChess(FChessMovePoint playerMovePoint)
+{
+	AEffectPosition* firstClickPos = chessBoard->GetClickPosition(playerMovePoint.from.row, playerMovePoint.from.col);
+	AEffectPosition* secondClickPos = chessBoard->GetClickPosition(playerMovePoint.to.row, playerMovePoint.to.col);
+	//合法的走棋要么是行走要么是吃子
+	if (chessRule->RunChessArray[playerMovePoint.to.row][playerMovePoint.to.col])//如果移动的点有棋子说明是吃子
+		secondClickPos->GetChessFromThisPos()->DeletSelf();//把已有的棋子删掉
+	
+	//改变棋子位置
+	firstClickPos->GetChessFromThisPos()->MoveSelf(secondClickPos->GetActorLocation());
+	//获取第一个位置的棋子然后放置到第二个位置上
+	secondClickPos->SetChessToThisPos(firstClickPos->GetChessFromThisPos());
+	//把第一个位置置空
+	firstClickPos->SetChessToThisPos(nullptr);
+
+	//改变数组序列
+	chessRule->ChangeRunChessArray(playerMovePoint);
+}
+

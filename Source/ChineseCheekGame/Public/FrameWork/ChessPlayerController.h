@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "FrameWork/ChessRule.h"
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "ChessPlayerController.generated.h"
@@ -46,4 +47,5 @@ public:
 
 	void MouseDownClick();
 
+	void ValidMoveChess(FChessMovePoint playerMovePoint);//合法的走法移动棋子
 };
