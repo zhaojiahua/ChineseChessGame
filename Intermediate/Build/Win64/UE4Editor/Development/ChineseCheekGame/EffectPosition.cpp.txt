@@ -1,3 +1,0 @@
-E:\AAAWorking\UE4Projects\ChineseCheekGame\Intermediate\Build\Win64\UE4Editor\Development\ChineseCheekGame\Definitions.ChineseCheekGame.h
-E:\AAAWorking\UE4Projects\ChineseCheekGame\Source\ChineseCheekGame\Public\Chess/EffectPosition.h
-E:\AAAWorking\UE4Projects\ChineseCheekGame\Intermediate\Build\Win64\UE4Editor\Inc\ChineseCheekGame\EffectPosition.generated.h

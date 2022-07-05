@@ -1,8 +1,0 @@
-{
-	"SourceFiles": [
-		"E:\\AAAWorking\\UE4Projects\\ChineseCheekGame\\Source\\ChineseCheekGame\\ChineseCheekGame.Build.cs",
-		"E:\\AAAWorking\\UE4Projects\\ChineseCheekGame\\Source\\ChineseCheekGame.Target.cs",
-		"E:\\AAAWorking\\UE4Projects\\ChineseCheekGame\\Source\\ChineseCheekGameEditor.Target.cs"
-	],
-	"EngineVersion": "4.27.2"
-}
