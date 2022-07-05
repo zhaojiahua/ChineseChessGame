@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "FrameWork/ChessRule.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "SearchMoveEngine.generated.h"

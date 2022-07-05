@@ -2,7 +2,6 @@
 
 
 #include "AI/SearchMoveEngine.h"
-#include "FrameWork/ChessRule.h"
 #include "Chess/ChessBoard.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -22,6 +21,7 @@ void ASearchMoveEngine::GetRelativePosPiece(int32 chessBoard[10][9], int32 start
 {
 	relativeChessIndex = 0;//重置
 	int32 x = 0, y = 0, nchessID = chessBoard[startX][startY];
+	bool flag = false;
 
 	switch (nchessID)
 	{
@@ -111,7 +111,6 @@ void ASearchMoveEngine::GetRelativePosPiece(int32 chessBoard[10][9], int32 start
 	case 4://黑炮
 	case 11://红炮
 		x = 0, y = 0, nchessID = chessBoard[startX][startY];
-		bool flag = false;
 		x = startX + 1; y = startY;//向下遍历
 		flag = false;
 		while (x < 11)
