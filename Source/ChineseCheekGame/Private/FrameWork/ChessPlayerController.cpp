@@ -7,8 +7,11 @@
 #include "Chess/EffectPosition.h"
 #include "Chess/ChessBoard.h"
 #include "Chess/ChessPiece.h"
+#include "AI/AIMoveGenerator.h"
+#include "AI/SearchMoveEngine.h"
 #include <Runtime/UMG/Public/Blueprint/UserWidget.h>
 #include "Kismet/GameplayStatics.h"
+
 
 AChessPlayerController::AChessPlayerController()
 {
@@ -44,6 +47,13 @@ void AChessPlayerController::BeginPlay()
 	chessRule->Init(); //规则类初始化
 	chessBoard->SetRule(chessRule); //将chessRule传给chessBoard
 	chessBoard->Init(); //棋盘初始化
+
+	//创建AI类
+	cMove = GetWorld()->SpawnActor<AAIMoveGenerator>(cMoveGen_BP);//走法产生类
+	cMove->SetAIRule(chessRule);
+
+	searchEngine = GetWorld()->SpawnActor<ASearchMoveEngine>(searchEngine_BP);//走法产生类
+	searchEngine->Init(chessRule, cMove);
 }
 
 void AChessPlayerController::SetupInputComponent()
@@ -81,7 +91,7 @@ void AChessPlayerController::MouseWheelPush(float value)
 void AChessPlayerController::MousePressed()
 {
 	bIsMousePressed = true;
-	MouseDownClick();
+	if (chessRule->GetRedMove())MouseDownClick();
 }
 
 void AChessPlayerController::MouseReleased()
@@ -112,6 +122,8 @@ void AChessPlayerController::MouseDownClick()
 			if (validMoveFinished)//走棋合法
 			{
 				ValidMoveChess(playerMovePoint);
+				chessRule->SetRedMove(false);//红方合法走棋完了要设置成黑方走棋
+				AIMove();//机器人走棋
 			}
 		}
 	}
@@ -134,5 +146,12 @@ void AChessPlayerController::ValidMoveChess(FChessMovePoint playerMovePoint)
 
 	//改变数组序列
 	chessRule->ChangeRunChessArray(playerMovePoint);
+}
+
+void AChessPlayerController::AIMove()
+{
+	FChessMovePoint temp_point = searchEngine->AIMove();
+	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Blue, FString::FromInt(temp_point.from.row) + FString::FromInt(temp_point.from.col) + FString::FromInt(temp_point.to.row) + FString::FromInt(temp_point.to.col));
+	chessRule->SetRedMove(true);
 }
 

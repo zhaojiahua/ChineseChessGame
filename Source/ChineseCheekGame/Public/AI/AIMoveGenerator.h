@@ -23,7 +23,7 @@ public:
 	FChessMovePoint validMoveList[8][90];//存放黑方所有棋子合法落子的队列
 	int32 validMoveCount = 0;//用来存放合法队列的个数
 	void AddValidMove(int32 chessIndex, int32 inFromRow, int32 inFromCol, int32 inToRow, int32 inToCol);
-	void ValidMovePoints(int32 chessBoard[10][9], int32 chessIndex, int32 isRedSide);//遍历相应棋子在棋盘上面所有的合法走法
+	int32 ValidMovePoints(int32 chessBoard[10][9], int32 chessIndex, int32 isRedSide);//遍历相应棋子在棋盘上面所有的合法走法
 
 	void Gen_KingMove(int32 chessBoard[10][9], int32 startRow, int32 startCol, int32 chessIndex);//生成将或者帅的合法走法(寻找合理的落子点),并插入到validMoveList队列中
 	void Gen_JuMove(int32 chessBoard[10][9], int32 startRow, int32 startCol, int32 chessIndex);//生成車的合法走法

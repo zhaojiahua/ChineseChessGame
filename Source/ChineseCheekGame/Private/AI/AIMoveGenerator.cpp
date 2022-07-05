@@ -22,7 +22,7 @@ void AAIMoveGenerator::AddValidMove(int32 chessIndex,int32 inFromRow, int32 inFr
 	validMoveCount++;
 }
 
-void AAIMoveGenerator::ValidMovePoints(int32 chessBoard[10][9], int32 chessIndex, int32 isRedSide)
+int32 AAIMoveGenerator::ValidMovePoints(int32 chessBoard[10][9], int32 chessIndex, int32 isRedSide)
 {
 	validMoveCount = 0;//首先把计数器归零
 	int32 i = 0, j = 0, nchessID = 0;
@@ -79,6 +79,7 @@ void AAIMoveGenerator::ValidMovePoints(int32 chessBoard[10][9], int32 chessIndex
 			}
 		}
 	}
+	return validMoveCount;//把合法走法的个数返回出去
 }
 
 void AAIMoveGenerator::Gen_KingMove(int32 chessBoard[10][9], int32 startRow, int32 startCol, int32 chessIndex)
@@ -104,12 +105,13 @@ void AAIMoveGenerator::Gen_JuMove(int32 chessBoard[10][9], int32 startRow, int32
 {
 	int32 x = 0, y = 0, nchessID = chessBoard[startRow][startCol];
 	x = startRow + 1; y = startCol;//向下遍历
-	while (x<11)
+	while (x<10)
 	{
 		if (chessBoard[x][y] == 0) AddValidMove(chessIndex, startRow, startCol, x, y);
 		else
 		{
 			if (!chessRule->IsSameColorChess(nchessID, chessBoard[x][y])) AddValidMove(chessIndex, startRow, startCol, x, y);
+			break;
 		}
 		x++;
 	}
@@ -120,16 +122,18 @@ void AAIMoveGenerator::Gen_JuMove(int32 chessBoard[10][9], int32 startRow, int32
 		else
 		{
 			if (!chessRule->IsSameColorChess(nchessID, chessBoard[x][y])) AddValidMove(chessIndex, startRow, startCol, x, y);
+			break;
 		}
 		x--;
 	}
 	x = startRow; y = startCol+1;//向左遍历
-	while (y<10)
+	while (y<9)
 	{
 		if (chessBoard[x][y] == 0) AddValidMove(chessIndex, startRow, startCol, x, y);
 		else
 		{
 			if (!chessRule->IsSameColorChess(nchessID, chessBoard[x][y])) AddValidMove(chessIndex, startRow, startCol, x, y);
+			break;
 		}
 		y++;
 	}
@@ -140,6 +144,7 @@ void AAIMoveGenerator::Gen_JuMove(int32 chessBoard[10][9], int32 startRow, int32
 		else
 		{
 			if (!chessRule->IsSameColorChess(nchessID, chessBoard[x][y])) AddValidMove(chessIndex, startRow, startCol, x, y);
+			break;
 		}
 		y--;
 	}
@@ -173,7 +178,7 @@ void AAIMoveGenerator::Gen_PaoMove(int32 chessBoard[10][9], int32 startRow, int3
 	bool flag = false;
 	x = startRow + 1; y = startCol;//向下遍历
 	flag = false;
-	while (x < 11)
+	while (x < 10)
 	{
 		if (chessBoard[x][y] == 0)
 		{
@@ -192,7 +197,7 @@ void AAIMoveGenerator::Gen_PaoMove(int32 chessBoard[10][9], int32 startRow, int3
 	}
 	x = startRow - 1; y = startCol;//向上遍历
 	flag = false;
-	while (x < 11)
+	while (x >= 0)
 	{
 		if (chessBoard[x][y] == 0)
 		{
@@ -211,7 +216,7 @@ void AAIMoveGenerator::Gen_PaoMove(int32 chessBoard[10][9], int32 startRow, int3
 	}
 	x = startRow; y = startCol + 1;//向左遍历
 	flag = false;
-	while (x < 11)
+	while (y < 9)
 	{
 		if (chessBoard[x][y] == 0)
 		{
@@ -230,7 +235,7 @@ void AAIMoveGenerator::Gen_PaoMove(int32 chessBoard[10][9], int32 startRow, int3
 	}
 	x = startRow; y = startCol - 1;//向右遍历
 	flag = false;
-	while (x < 11)
+	while (y >= 0)
 	{
 		if (chessBoard[x][y] == 0)
 		{
@@ -254,11 +259,11 @@ void AAIMoveGenerator::Gen_XiangMove(int32 chessBoard[10][9], int32 startRow, in
 	int32 x = 0, y = 0;
 	//四个方向分别遍历
 	x = startRow + 2; y = startCol + 2;
-	if (x<11&&y<10&&chessRule->IsValidMove(startRow, startCol,x,y)) AddValidMove(chessIndex, startRow, startCol, x, y);
+	if (x<10&&y<9&&chessRule->IsValidMove(startRow, startCol,x,y)) AddValidMove(chessIndex, startRow, startCol, x, y);
 	x = startRow + 2; y = startCol - 2;
-	if (x < 11 && y >= 0 && chessRule->IsValidMove(startRow, startCol, x, y)) AddValidMove(chessIndex, startRow, startCol, x, y);
+	if (x < 10 && y >= 0 && chessRule->IsValidMove(startRow, startCol, x, y)) AddValidMove(chessIndex, startRow, startCol, x, y);
 	x = startRow - 2; y = startCol + 2;
-	if (x >= 0 && y < 10 && chessRule->IsValidMove(startRow, startCol, x, y)) AddValidMove(chessIndex, startRow, startCol, x, y);
+	if (x >= 0 && y < 9 && chessRule->IsValidMove(startRow, startCol, x, y)) AddValidMove(chessIndex, startRow, startCol, x, y);
 	x = startRow - 2; y = startCol - 2;
 	if (x >=0 && y>=0 && chessRule->IsValidMove(startRow, startCol, x, y)) AddValidMove(chessIndex, startRow, startCol, x, y);
 }
@@ -278,7 +283,7 @@ void AAIMoveGenerator::Gen_BShiMove(int32 chessBoard[10][9], int32 startRow, int
 void AAIMoveGenerator::Gen_RShiMove(int32 chessBoard[10][9], int32 startRow, int32 startCol, int32 chessIndex)
 {
 	int32 x = 0, y = 0;
-	for (x = 7; x <= 10; x++)
+	for (x = 7; x < 10; x++)
 	{
 		for (y = 3; y < 6; y++)
 		{
@@ -291,12 +296,12 @@ void AAIMoveGenerator::Gen_ZuMove(int32 chessBoard[10][9], int32 startRow, int32
 {
 	int32 x = 0, y = 0, nchessID = chessBoard[startRow][startCol];
 	x = startRow + 1; y = startCol;
-	if (x < 11 && !chessRule->IsSameColorChess(nchessID, chessBoard[x][y])) AddValidMove(chessIndex, startRow, startCol, x, y);
+	if (x < 10 && !chessRule->IsSameColorChess(nchessID, chessBoard[x][y])) AddValidMove(chessIndex, startRow, startCol, x, y);
 	//小兵过河的情况还要遍历左右
 	if (x > 4)
 	{
 		x = startRow; y = startCol + 1;//向左遍历
-		if (y < 10 && !chessRule->IsSameColorChess(nchessID, chessBoard[x][y])) AddValidMove(chessIndex, startRow, startCol, x, y);
+		if (y < 9 && !chessRule->IsSameColorChess(nchessID, chessBoard[x][y])) AddValidMove(chessIndex, startRow, startCol, x, y);
 		x = startRow; y = startCol - 1;//向右遍历
 		if (y >= 0 && !chessRule->IsSameColorChess(nchessID, chessBoard[x][y])) AddValidMove(chessIndex, startRow, startCol, x, y);
 	}
@@ -312,7 +317,7 @@ void AAIMoveGenerator::Gen_BingMove(int32 chessBoard[10][9], int32 startRow, int
 	if (x<5)
 	{
 		x = startRow; y = startCol + 1;//向左遍历
-		if (y < 10 && !chessRule->IsSameColorChess(nchessID, chessBoard[x][y])) AddValidMove(chessIndex, startRow, startCol, x, y);
+		if (y < 9 && !chessRule->IsSameColorChess(nchessID, chessBoard[x][y])) AddValidMove(chessIndex, startRow, startCol, x, y);
 		x = startRow; y = startCol - 1;//向右遍历
 		if (y >= 0 && !chessRule->IsSameColorChess(nchessID, chessBoard[x][y])) AddValidMove(chessIndex, startRow, startCol, x, y);
 	}

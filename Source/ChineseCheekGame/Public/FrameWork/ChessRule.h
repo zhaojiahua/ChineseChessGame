@@ -70,6 +70,11 @@ public:
 	//行走中的棋盘
 	int32 RunChessArray[10][9];
 
+	bool isRedMove = true;//默认红棋走子
+
+	bool GetRedMove();
+	void SetRedMove(bool inMove);
+
 	void Init();//初始化RunChessArray(运行中的棋盘)
 
 	bool IsRedChess(int32 inValue);//判断是否是红色棋子

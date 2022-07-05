@@ -38,6 +38,9 @@ private:
 	class AChessRule* chessRule;
 	class AChessBoard* chessBoard;
 
+	class AAIMoveGenerator* cMove;
+	class ASearchMoveEngine* searchEngine;
+
 public:
 	UPROPERTY(BlueprintReadOnly,Category="MouseAttrs")
 	bool bIsMousePressed = false;
@@ -45,7 +48,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FrameWorks")
 		TSubclassOf<class AChessRule> chessRule_BP;//ChessRule规则类蓝图
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+		TSubclassOf<class AAIMoveGenerator> cMoveGen_BP;//AI类蓝图
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+		TSubclassOf<class ASearchMoveEngine> searchEngine_BP;//AI类蓝图
+
 	void MouseDownClick();
 
 	void ValidMoveChess(FChessMovePoint playerMovePoint);//合法的走法移动棋子
+
+	void AIMove();
+
 };
