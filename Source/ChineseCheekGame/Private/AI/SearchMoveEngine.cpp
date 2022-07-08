@@ -11,10 +11,12 @@ ASearchMoveEngine::ASearchMoveEngine()
 {
 }
 
-void ASearchMoveEngine::Init(class AChessRule* inRule, class AAIMoveGenerator* inMoveGen)
+void ASearchMoveEngine::Init(class AChessRule* inRule, class AAIMoveGenerator* inMoveGen,int32 inDepth)
 {
 	SetGeneratorMove(inMoveGen);
 	SetChessRule(inRule);
+	SetSearchDepth(inDepth);
+	//GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Silver, "current depth "+FString::FromInt(inDepth));
 }
 
 void ASearchMoveEngine::AddRelativePos(int32 inRow, int32 inCol)
@@ -508,6 +510,11 @@ void ASearchMoveEngine::SetChessRule(AChessRule* inChessRule)
 void ASearchMoveEngine::SetGeneratorMove(class AAIMoveGenerator* inMove)
 {
 	cMove = inMove;//给CMove赋值
+}
+
+void ASearchMoveEngine::SetSearchDepth(int32 inDepth)
+{
+	searchDepth = inDepth;
 }
 
 FChessMovePoint ASearchMoveEngine::AIMove()

@@ -69,7 +69,7 @@ public:
 	{0, 0, 0, 0, 0, 0, 0, 0, 0}
 	};
 
-	void Init(class AChessRule* inRule, class AAIMoveGenerator* inMoveGen);//初始化函数供playerController调用
+	void Init(class AChessRule* inRule, class AAIMoveGenerator* inMoveGen, int32 inDepth);//初始化函数供playerController调用
 
 	void AddRelativePos(int32 inRow, int32 inCol);
 	void GetRelativePosPiece(int32 chessBoard[10][9], int32 startX, int32 startY);
@@ -84,6 +84,7 @@ public:
 
 	void SetChessRule(class AChessRule* inChessRule);
 	void SetGeneratorMove(class AAIMoveGenerator* inMove);
+	void SetSearchDepth(int32 inDepth);
 
 	FChessMovePoint AIMove();//把最佳走法返回出去
 

@@ -4,6 +4,7 @@
 #include "FrameWork/ChessRule.h"
 #include "FrameWork/ChessPlayerState.h"
 #include "FrameWork/ChessCharacter.h"
+#include "FrameWork/ChessGameInstance.h"
 #include "Chess/EffectPosition.h"
 #include "Chess/ChessBoard.h"
 #include "Chess/ChessPiece.h"
@@ -53,7 +54,7 @@ void AChessPlayerController::BeginPlay()
 	cMove->SetAIRule(chessRule);
 
 	searchEngine = GetWorld()->SpawnActor<ASearchMoveEngine>(searchEngine_BP);//走法产生类
-	searchEngine->Init(chessRule, cMove);
+	searchEngine->Init(chessRule, cMove,GetDepthFromGameInstance());
 }
 
 void AChessPlayerController::SetupInputComponent()
@@ -108,6 +109,12 @@ void AChessPlayerController::Tick(float DeltaTime)
 		isCanMoving = true;
 		if (!isRedMove) AIMove();
 	}
+}
+
+int32 AChessPlayerController::GetDepthFromGameInstance()
+{
+	UChessGameInstance* gameInstance = Cast<UChessGameInstance>(GetWorld()->GetGameInstance());
+	return gameInstance->GetCurrentSearchDepth();
 }
 
 void AChessPlayerController::MouseDownClick()

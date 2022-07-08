@@ -60,6 +60,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 		bool isRedMove = true;
 
+	int32 GetDepthFromGameInstance();
+
 	void MouseDownClick();
 
 	void ValidMoveChess(FChessMovePoint playerMovePoint);//合法的走法移动棋子
