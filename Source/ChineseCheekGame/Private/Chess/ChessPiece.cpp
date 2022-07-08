@@ -34,7 +34,7 @@ AChessPiece::AChessPiece()
 void AChessPiece::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	deathTime = maxMoveTime;
 }
 
 // Called every frame
@@ -42,6 +42,15 @@ void AChessPiece::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	TickMoveSelf(DeltaTime);
+	while (deathTime>0)
+	{
+		deathTime -= DeltaTime;
+		if (deathTime<=0)
+		{
+			IsCanDeath = true;
+			break;
+		}
+	}
 }
 
 void AChessPiece::SetTextInfo(FString inStr)
@@ -109,6 +118,11 @@ void AChessPiece::MoveSelf(FVector inLocation)
 
 void AChessPiece::DeletSelf()
 {
-	Destroy(true);
+	if (IsCanDeath) 
+	{ 
+		Destroy(true); 
+		IsCanDeath = false;
+		deathTime = maxMoveTime;
+	}
 }
 

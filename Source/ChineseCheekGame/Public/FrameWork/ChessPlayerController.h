@@ -54,10 +54,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 		TSubclassOf<class ASearchMoveEngine> searchEngine_BP;//AI类蓝图
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
+		float moveIntervalTime = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+		bool isRedMove = true;
+
 	void MouseDownClick();
 
 	void ValidMoveChess(FChessMovePoint playerMovePoint);//合法的走法移动棋子
 
 	void AIMove();
 
+private:
+	float tempMoveTime = 0;
+	bool isCanMoving = false;	//是否移动中
 };

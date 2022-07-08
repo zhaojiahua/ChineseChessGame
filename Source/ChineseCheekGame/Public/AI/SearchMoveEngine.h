@@ -16,6 +16,7 @@ public:
 	ASearchMoveEngine();
 
 public:
+	UPROPERTY(EditAnywhere,Category="SearchAttrs")
 	int32 searchDepth = 1;//搜索的深度同时也是游戏难度(要从UI界面上获取值)
 	int32 maxSearchDepth;
 

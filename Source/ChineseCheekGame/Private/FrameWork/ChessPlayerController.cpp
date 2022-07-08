@@ -91,7 +91,7 @@ void AChessPlayerController::MouseWheelPush(float value)
 void AChessPlayerController::MousePressed()
 {
 	bIsMousePressed = true;
-	if (chessRule->GetRedMove())MouseDownClick();
+	if (isRedMove)MouseDownClick();
 }
 
 void AChessPlayerController::MouseReleased()
@@ -102,6 +102,12 @@ void AChessPlayerController::MouseReleased()
 void AChessPlayerController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (tempMoveTime < moveIntervalTime) { tempMoveTime += DeltaTime; }
+	else
+	{
+		isCanMoving = true;
+		if (!isRedMove) AIMove();
+	}
 }
 
 void AChessPlayerController::MouseDownClick()
@@ -122,8 +128,8 @@ void AChessPlayerController::MouseDownClick()
 			if (validMoveFinished)//走棋合法
 			{
 				ValidMoveChess(playerMovePoint);
-				chessRule->SetRedMove(false);//红方合法走棋完了要设置成黑方走棋
-				AIMove();//机器人走棋
+				isRedMove=false;//红方合法走棋完了要设置成黑方走棋
+				tempMoveTime = 0.0f;
 			}
 		}
 	}
@@ -152,6 +158,8 @@ void AChessPlayerController::AIMove()
 {
 	FChessMovePoint temp_point = searchEngine->AIMove();
 	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Blue, FString::FromInt(temp_point.from.row) + FString::FromInt(temp_point.from.col) + FString::FromInt(temp_point.to.row) + FString::FromInt(temp_point.to.col));
-	chessRule->SetRedMove(true);
+	isRedMove = true;
+	ValidMoveChess(temp_point);//AI移动棋子
+	tempMoveTime = 0.0f;
 }
 

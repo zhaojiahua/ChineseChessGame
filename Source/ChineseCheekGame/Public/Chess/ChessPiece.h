@@ -51,8 +51,10 @@ public:
 	void ClickMat();//鼠标点击时换材质
 
 	bool isAutoMove = false;
+	bool IsCanDeath = false;
 	FVector targetLocation, moveDirection, startLocation;
-	float maxMoveTime = 0.3f, moveTime, moveDistance, moveVelocity;
+	float maxMoveTime = 0.3f, moveTime, moveDistance, moveVelocity, deathTime;
+
 	void TickMoveSelf(float deltaTime);
 
 	void MoveSelf(FVector inLocation);

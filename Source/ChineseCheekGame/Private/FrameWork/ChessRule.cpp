@@ -18,15 +18,6 @@ void AChessRule::BeginPlay()
 
 }
 
-bool AChessRule::GetRedMove()
-{
-	return isRedMove;
-}
-
-void AChessRule::SetRedMove(bool inMove)
-{
-	isRedMove = inMove;
-}
 
 void AChessRule::Init()
 {
