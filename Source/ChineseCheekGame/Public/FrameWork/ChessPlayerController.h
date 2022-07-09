@@ -60,7 +60,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 		bool isRedMove = true;
 
-	int32 GetDepthFromGameInstance();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+		TSubclassOf<class UUserWidget> chessMainUI_BP;//UI类蓝图
 
 	void MouseDownClick();
 
@@ -68,7 +69,15 @@ public:
 
 	void AIMove();
 
+	//设置UI界面输出
+	void AddDebugInfoToScreen(FString inString, int32 inType = 0);
+
+	//从gameInstance上获取
+	int32 GetDepthFromGameInstance();
+	FString GetDepthUIFromDepth(int32 inDepth);
+
 private:
 	float tempMoveTime = 0;
 	bool isCanMoving = false;	//是否移动中
+	class UChessMainUI* chessMainUI;//游戏界面主UI
 };

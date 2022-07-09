@@ -87,4 +87,7 @@ public:
 
 		//获取棋盘中可走位置和可吃子位置的标记
 	TArray<int32> GetCanMovePosition(int32 inRow, int32 inCol);
+
+	//判断是否将军
+	int32 Checking();
 };

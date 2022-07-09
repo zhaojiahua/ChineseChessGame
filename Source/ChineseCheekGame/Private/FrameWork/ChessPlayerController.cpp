@@ -10,6 +10,7 @@
 #include "Chess/ChessPiece.h"
 #include "AI/AIMoveGenerator.h"
 #include "AI/SearchMoveEngine.h"
+#include "UI/ChessMainUI.h"
 #include <Runtime/UMG/Public/Blueprint/UserWidget.h>
 #include "Kismet/GameplayStatics.h"
 
@@ -55,6 +56,17 @@ void AChessPlayerController::BeginPlay()
 
 	searchEngine = GetWorld()->SpawnActor<ASearchMoveEngine>(searchEngine_BP);//走法产生类
 	searchEngine->Init(chessRule, cMove,GetDepthFromGameInstance());
+
+	//创建游戏主UI界面
+	if (chessMainUI_BP)
+	{
+		UUserWidget* tempUI = CreateWidget(GetWorld(), chessMainUI_BP);
+		chessMainUI = Cast<UChessMainUI>(tempUI);
+		chessMainUI->AddToViewport();
+	}
+	//向UI界面添加信息
+	AddDebugInfoToScreen(TEXT("欢迎来到中国象棋!!游戏开始了!!"));
+	AddDebugInfoToScreen(TEXT("当前游戏难度等级: " + GetDepthUIFromDepth(GetDepthFromGameInstance())));
 }
 
 void AChessPlayerController::SetupInputComponent()
@@ -117,6 +129,26 @@ int32 AChessPlayerController::GetDepthFromGameInstance()
 	return gameInstance->GetCurrentSearchDepth();
 }
 
+FString AChessPlayerController::GetDepthUIFromDepth(int32 inDepth)
+{
+	FString depthUI = " ";
+	switch (inDepth)
+	{
+	case 1:
+		depthUI += TEXT("初级");
+		break;
+	case 2:
+		depthUI += TEXT("中级");
+		break;
+	case 3:
+		depthUI += TEXT("高级");
+		break;
+	default:
+		break;
+	}
+	return depthUI;
+}
+
 void AChessPlayerController::MouseDownClick()
 {
 	FHitResult hitResult;
@@ -157,16 +189,61 @@ void AChessPlayerController::ValidMoveChess(FChessMovePoint playerMovePoint)
 	//把第一个位置置空
 	firstClickPos->SetChessToThisPos(nullptr);
 
+	//向界面输出信息
+	FString tempLog = "";
+	int32 tempInfoType = 0;
+	if (isRedMove)
+	{
+		tempLog += TEXT("红棋: ");
+		tempInfoType = 1;
+	}
+	else
+	{
+		tempLog += TEXT("黑棋: ");
+		tempInfoType = 2;
+	}
+	//普通走棋记录
+	tempLog += "from " + FString::FromInt(playerMovePoint.from.row) + "  " + FString::FromInt(playerMovePoint.from.col) + "   to " + FString::FromInt(playerMovePoint.to.row) + "  " + FString::FromInt(playerMovePoint.to.col);
+	AddDebugInfoToScreen(tempLog, tempInfoType);
+	//吃子的输出
+	int32 chessIDValue = chessRule->RunChessArray[playerMovePoint.to.row][playerMovePoint.to.col];
+	if (chessIDValue !=0)
+	{
+		tempLog = " ";
+		tempInfoType = 0;
+		if (chessRule->IsRedChess(chessIDValue))tempLog += TEXT("红色棋子: ") + chessBoard->GetChessInfo(chessIDValue) + TEXT(" 被吃掉!");
+		else tempLog += TEXT("蓝色棋子: ") + chessBoard->GetChessInfo(chessIDValue) + TEXT(" 被吃掉!");
+		AddDebugInfoToScreen(tempLog, tempInfoType);
+	}
 	//改变数组序列
 	chessRule->ChangeRunChessArray(playerMovePoint);
+
+	//将军提示
+	int32 checkResult = chessRule->Checking();
+	switch (checkResult)
+	{
+	case 1:
+		AddDebugInfoToScreen(TEXT("红方被将军!!!"), 0);
+		break;
+	case 2:
+		AddDebugInfoToScreen(TEXT("黑方被将军!!!"), 0);
+		break;
+	default:
+		break;
+	}
 }
 
 void AChessPlayerController::AIMove()
 {
 	FChessMovePoint temp_point = searchEngine->AIMove();
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Blue, FString::FromInt(temp_point.from.row) + FString::FromInt(temp_point.from.col) + FString::FromInt(temp_point.to.row) + FString::FromInt(temp_point.to.col));
-	isRedMove = true;
+	//GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Blue, FString::FromInt(temp_point.from.row) + FString::FromInt(temp_point.from.col) + FString::FromInt(temp_point.to.row) + FString::FromInt(temp_point.to.col));
 	ValidMoveChess(temp_point);//AI移动棋子
+	isRedMove = true;
 	tempMoveTime = 0.0f;
+}
+
+void AChessPlayerController::AddDebugInfoToScreen(FString inString, int32 inType)
+{
+	if (chessMainUI) chessMainUI->AddToScreenInfo(inString, inType);
 }
 

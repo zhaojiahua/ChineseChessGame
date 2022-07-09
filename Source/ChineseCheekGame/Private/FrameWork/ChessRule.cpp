@@ -323,3 +323,44 @@ TArray<int32> AChessRule::GetCanMovePosition(int32 inRow, int32 inCol)
 	}
 	return temp_array;
 }
+
+int32 AChessRule::Checking()
+{
+	int32 i, j;
+	FChessPosition heiJiangPoint, hongshuaiPoint;
+	heiJiangPoint.row = 0;
+	heiJiangPoint.col = 0;
+	hongshuaiPoint.row = 0;
+	hongshuaiPoint.col = 0;
+	//首先确定黑将和红帅的位置
+	for (i=0;i<10;i++)
+	{
+		for ( j=0;j<9;j++)
+		{
+			if (RunChessArray[i][j] == 1)
+			{
+				heiJiangPoint.row = i;
+				heiJiangPoint.col = j;
+			}
+			if (RunChessArray[i][j] == 8)
+			{
+				hongshuaiPoint.row = i;
+				hongshuaiPoint.col = j;
+			}
+		}
+	}
+
+	//判断是否将军 红方被将返回1,黑方被将返回2,否则返回0
+	for (i = 0; i < 10; i++)
+	{
+		for (j = 0; j < 9; j++)
+		{
+			if (RunChessArray[i][j])
+			{
+				if (IsValidMove(i, j, heiJiangPoint.row, heiJiangPoint.col) && heiJiangPoint.col != 0) return 2;
+				if (IsValidMove(i, j, hongshuaiPoint.row, hongshuaiPoint.col) && hongshuaiPoint.col != 0) return 1;
+			}
+		}
+	}
+	return 0;
+}
