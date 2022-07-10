@@ -104,7 +104,7 @@ void AChessPlayerController::MouseWheelPush(float value)
 void AChessPlayerController::MousePressed()
 {
 	bIsMousePressed = true;
-	if (isRedMove)MouseDownClick();
+	if (isRedMove && bIsGameOver == false)MouseDownClick();
 }
 
 void AChessPlayerController::MouseReleased()
@@ -119,7 +119,7 @@ void AChessPlayerController::Tick(float DeltaTime)
 	else
 	{
 		isCanMoving = true;
-		if (!isRedMove) AIMove();
+		if (!isRedMove && bIsGameOver == false) AIMove();
 	}
 }
 
@@ -147,6 +147,37 @@ FString AChessPlayerController::GetDepthUIFromDepth(int32 inDepth)
 		break;
 	}
 	return depthUI;
+}
+
+void AChessPlayerController::RetStartGame()
+{
+	chessBoard->InitBoardAgain();//重置棋盘
+	chessMainUI->ClearScreenInfo();//清空输出信息
+	AddDebugInfoToScreen(TEXT("游戏重新开始!!!!"));
+	bIsGameOver = false;
+	isRedMove = true;
+}
+
+void AChessPlayerController::BackChess()
+{
+	int32 temp = chessRule->backPositionArray.Num();
+	if (temp > 1)
+	{
+		chessBoard->BackPreBoard(chessRule->GetSecondLastBackPosition().Position);
+		//恢复runChessArray
+		chessRule->ChangeRunChessArray(chessRule->GetSecondLastBackPosition().Position);
+		//移除backChessArray的最后一个元素
+		chessRule->RemoveFromBackPositionArray();
+		AddDebugInfoToScreen(TEXT("悔棋"));
+	}
+	else
+		RetStartGame();
+}
+
+bool AChessPlayerController::IsGameOver(int32 inX, int32 inY)
+{
+	int32 chessIDValue = chessRule->RunChessArray[inX][inY];
+	return  chessIDValue == 1 || chessIDValue == 8;
 }
 
 void AChessPlayerController::MouseDownClick()
@@ -215,8 +246,20 @@ void AChessPlayerController::ValidMoveChess(FChessMovePoint playerMovePoint)
 		else tempLog += TEXT("蓝色棋子: ") + chessBoard->GetChessInfo(chessIDValue) + TEXT(" 被吃掉!");
 		AddDebugInfoToScreen(tempLog, tempInfoType);
 	}
+
+	if (IsGameOver(playerMovePoint.to.row, playerMovePoint.to.col))
+	{
+		AddDebugInfoToScreen(TEXT("游戏结束!!!"));
+		if (chessRule->RunChessArray[playerMovePoint.to.row][playerMovePoint.to.col] == 1) AddDebugInfoToScreen(TEXT("红方胜利!!!"));
+		else AddDebugInfoToScreen(TEXT("蓝方胜利!!!"));
+		bIsGameOver = true;	
+	}
+
 	//改变数组序列
 	chessRule->ChangeRunChessArray(playerMovePoint);
+
+	//向backChessArray中添加元素
+	if (!isRedMove) chessRule->StoreChessBackPositions();
 
 	//将军提示
 	int32 checkResult = chessRule->Checking();

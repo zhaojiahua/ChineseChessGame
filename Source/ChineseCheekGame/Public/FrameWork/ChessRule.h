@@ -33,6 +33,15 @@ public:
 		FChessPosition to;
 };
 
+//悔棋的结构体
+USTRUCT(BlueprintType)
+struct FChessBackPosition
+{
+	GENERATED_USTRUCT_BODY()
+public:
+		int32 Position[10][9];
+};
+
 UCLASS()
 class CHINESECHEEKGAME_API AChessRule : public AActor
 {
@@ -70,6 +79,8 @@ public:
 	//行走中的棋盘
 	int32 RunChessArray[10][9];
 
+	TArray<FChessBackPosition>  backPositionArray;//悔棋结构数组
+
 	void Init();//初始化RunChessArray(运行中的棋盘)
 
 	bool IsRedChess(int32 inValue);//判断是否是红色棋子
@@ -84,10 +95,18 @@ public:
 	bool IsValidMove(int32 fromRow, int32 fromCol, int32 toRow, int32 toCol);//是否为有效走法
 
 	void ChangeRunChessArray(FChessMovePoint movePoint);//改变行走的棋盘
+	void ChangeRunChessArray(int32 inBoardPosition[10][9]);//通过传入的棋盘直接改变当前棋盘(可用于悔棋和重置棋盘等)
 
 		//获取棋盘中可走位置和可吃子位置的标记
 	TArray<int32> GetCanMovePosition(int32 inRow, int32 inCol);
 
 	//判断是否将军
 	int32 Checking();
+
+	//存储悔棋的棋盘到悔棋结构数组backPositionArray
+	void StoreChessBackPositions();
+	//移除悔棋数组的中悔棋棋盘
+	void RemoveFromBackPositionArray();
+	//获取队列的倒数第二个元素
+	FChessBackPosition GetSecondLastBackPosition();
 };

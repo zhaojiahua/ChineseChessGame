@@ -16,6 +16,7 @@ class CHINESECHEEKGAME_API UChessMainUI : public UUserWidget
 
 public:
 	void AddToScreenInfo(FString instring, int32 inType);
+	void ClearScreenInfo();
 	TArray<UDebugTextUI*> infoItemsList;
 	UFUNCTION(BlueprintImplementableEvent)
 		class UDebugTextUI* AddInfo(const FString& inString, int32 inNifoType);//添加日志输出

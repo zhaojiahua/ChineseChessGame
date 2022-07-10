@@ -60,7 +60,15 @@ public:
 	//清空可行走位置
 	void ClearCanMovePointsArray();
 
+	void InitBoardAgain();
+	//清空棋盘上的棋子
+	void ClearChessPiece();
+	//返回悔棋棋盘
+	void BackPreBoard(int32 inBoardPosition[10][9]);
+
 private:
 	class AEffectPosition* clickPointsArray[10][9];
-	TArray<class AEffectPosition*> canMovePointsArray;
+
+	TArray<class AEffectPosition*> canMovePointsArray;//棋盘上所有的可点击的点
+	TArray<class AChessPiece*>chessArray;//生成的棋盘上的所有的棋子
 };

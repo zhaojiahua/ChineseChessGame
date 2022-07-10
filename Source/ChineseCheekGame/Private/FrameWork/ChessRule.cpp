@@ -307,6 +307,13 @@ void AChessRule::ChangeRunChessArray(FChessMovePoint movePoint)
 	RunChessArray[movePoint.from.row][movePoint.from.col] = 0;
 }
 
+void AChessRule::ChangeRunChessArray(int32 inBoardPosition[10][9])
+{
+	for (int32 i=0;i<10;i++)
+		for (int32 j=0;j<9;j++)
+			RunChessArray[i][j] = inBoardPosition[i][j];
+}
+
 TArray<int32> AChessRule::GetCanMovePosition(int32 inRow, int32 inCol)
 {
 	TArray<int32> temp_array;
@@ -363,4 +370,27 @@ int32 AChessRule::Checking()
 		}
 	}
 	return 0;
+}
+
+void AChessRule::StoreChessBackPositions()
+{
+	FChessBackPosition tempBackPosition;
+	for (int32 i = 0; i < 10; i++)
+	{
+		for (int32 j = 0; j < 9; j++)
+		{
+			tempBackPosition.Position[i][j] = RunChessArray[i][j];
+		}
+	}
+	backPositionArray.Add(tempBackPosition);
+}
+
+void AChessRule::RemoveFromBackPositionArray()
+{
+	backPositionArray.RemoveAt(backPositionArray.Num()-1);//移除队列的最后一个元素
+}
+
+FChessBackPosition AChessRule::GetSecondLastBackPosition()
+{
+	return backPositionArray[backPositionArray.Num() - 2];
 }

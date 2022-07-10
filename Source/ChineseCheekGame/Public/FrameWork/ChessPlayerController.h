@@ -76,8 +76,17 @@ public:
 	int32 GetDepthFromGameInstance();
 	FString GetDepthUIFromDepth(int32 inDepth);
 
+	//重新开始游戏
+	UFUNCTION(BlueprintCallable, Category = "zjhAddFuns")
+		void RetStartGame();
+	//悔棋
+	UFUNCTION(BlueprintCallable, Category = "zjhAddFuns")
+		void BackChess();
+
 private:
 	float tempMoveTime = 0;
 	bool isCanMoving = false;	//是否移动中
+	bool bIsGameOver = false;//游戏是否结束标志位
 	class UChessMainUI* chessMainUI;//游戏界面主UI
+	bool IsGameOver(int32 inX, int32 inY);
 };

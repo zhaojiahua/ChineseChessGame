@@ -7,6 +7,7 @@
 #include "FrameWork/ChessRule.h"
 #include "Components/SceneComponent.h"
 #include "Components/ArrowComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 #
 
 // Sets default values
@@ -95,6 +96,8 @@ AChessPiece* AChessBoard::SpawnChess(FVector inLocation, int32 chessValue)
 	chess_temp->SetTextInfo(GetChessInfo(chessValue));
 	//设置该棋子的颜色
 	chess_temp->SetTextColor(chessRule->IsRedChess(chessValue));
+	//存储这个棋子到chessArray中
+	chessArray.Add(chess_temp);
 
 	return chess_temp;
 }
@@ -225,4 +228,37 @@ void AChessBoard::ClearCanMovePointsArray()
 	canMovePointsArray.Reset(0);
 }
 
+void AChessBoard::InitBoardAgain()
+{
+	BackPreBoard(chessRule->RunChessArray);
+}
+
+void AChessBoard::ClearChessPiece()
+{
+	for (int32 i=0;i< chessArray.Num();i++)
+	{
+		if (UKismetSystemLibrary::IsValid(chessArray[i])) chessArray[i]->DeletSelf();
+	}
+	chessArray.Reset(0);
+}
+
+void AChessBoard::BackPreBoard(int32 inBoardPosition[10][9])
+{
+	ClearChessPiece();
+	chessRule->Init();//恢复棋盘
+	for (int32 i = 0; i < 10; i++)
+	{
+		for (int32 j = 0; j < 9; j++)
+		{
+			if (inBoardPosition[i][j] != 0)
+			{
+				int32 inValue = inBoardPosition[i][j];
+				FVector inLocation = clickPointsArray[i][j]->GetActorLocation();
+				AChessPiece* chessActor = SpawnChess(inLocation, inValue);
+				clickPointsArray[i][j]->SetChessToThisPos(chessActor);
+			}
+			else clickPointsArray[i][j]->SetChessToThisPos(nullptr);
+		}
+	}
+}
 
